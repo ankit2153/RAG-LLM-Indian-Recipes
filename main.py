@@ -37,13 +37,23 @@ class AI:
 
 ai = AI()
 
-st.title('💬 Write your questions')
-st.sidebar.title("Chat History")
+
+app = st.session_state
+
+st.set_page_config(page_title="🍲 Food RAG-LLM", page_icon="🍲")
+
+# Main Title
+st.title('🍲 Ask Your Recipe Questions Here!')
+
+# Sidebar Title
+st.sidebar.title("📝 Chat History")
+
+# Initialize session state
 app = st.session_state
 
 if "messages" not in app:
     app["messages"] = [{"role": "assistant",
-                        "content": "I'm ready to retrieve information"}]
+                        "content": "👩‍🍳 I'm ready to help you with recipes!"}]
 
 if 'history' not in app:
     app['history'] = []
@@ -51,28 +61,40 @@ if 'history' not in app:
 if 'full_response' not in app:
     app['full_response'] = ''
 
-# Keep messages in the Chat
+# Keep messages in the chat
 for msg in app["messages"]:
     if msg["role"] == "user":
-        st.chat_message(msg["role"], avatar="😎").write(msg["content"])
+        st.chat_message(msg["role"], avatar="🧑‍🍳").write(msg["content"])
     elif msg["role"] == "assistant":
-        st.chat_message(msg["role"], avatar="👾").write(msg["content"])
+        st.chat_message(msg["role"], avatar="👩‍🍳").write(msg["content"])
 
 if txt := st.chat_input():
     # User writes
     app["messages"].append({"role": "user", "content": txt})
 
-    st.chat_message("user", avatar="😎").write(txt)
+    st.chat_message("user", avatar="🧑‍🍳").write(txt)
 
     # AI responds with chat stream
     app["full_response"] = ""
-    st.chat_message("assistant", avatar="👾").write_stream(
+    st.chat_message("assistant", avatar="👩‍🍳").write_stream(
         ai.respond(app["messages"]))
     app["messages"].append(
         {"role": "assistant", "content": app["full_response"]})
 
     # Show sidebar history
-    app['history'].append("😎: "+txt)
-    app['history'].append("👾: "+app["full_response"])
+    app['history'].append("🧑‍🍳: "+txt)
+    app['history'].append("👩‍🍳: "+app["full_response"])
     st.sidebar.markdown(
         "<br />".join(app['history'])+"<br /><br />", unsafe_allow_html=True)
+
+# Add some color
+st.markdown(
+    """
+    <style>
+    .stSidebar {background-color: #fff8e1;}
+    .stTitle {color: #ff7043;}
+    .stMarkdown {color: #ff7043;}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
